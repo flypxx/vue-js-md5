@@ -1,31 +1,72 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-      <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+    <div class="table">
+      <div class="row-wrapper">
+        <div class="name">name</div>
+        <div class="func">function</div>
+        <div class="value">value</div>
+      </div>
+      <div class="row-wrapper">
+        <div class="name">hello</div>
+        <div class="func">md5('hello')</div>
+        <div class="value">{{md5Str}}</div>
+      </div>
+      <div class="row-wrapper">
+        <div class="name">123</div>
+        <div class="func">md5(123)</div>
+        <div class="value">{{md5Num}}</div>
+      </div>
+      <div class="row-wrapper">
+        <div class="name">{id: '20170415',name: 'movie',lang: 'English',price: '80'}</div>
+        <div class="func">md5(getSig(obj))</div>
+        <div class="value">{{md5Json}}</div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import md5 from 'js-md5'
 export default {
   name: 'hello',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      flagid: 'ef4bfb57749acc663f0b1e52e097945f'
+    }
+  },
+  computed: {
+    md5Str () {
+      return md5('hello')
+    },
+    md5Num () {
+      return md5(123)
+    },
+    md5Json () {
+      let obj = {
+        id: '20170415',
+        name: 'movie',
+        lang: 'English',
+        price: '80'
+      }
+      return md5(this.getSig(obj))
+    }
+  },
+  methods: {
+    getSig (data) {
+      let keyArr = []
+      let valArr = []
+      for (var key in data) {
+        keyArr.push(key)
+      }
+      keyArr = keyArr.sort()
+      keyArr.forEach((item) => {
+        if (typeof (data[item]) !== 'undefined') {
+          valArr.push(item + data[item])
+        }
+      })
+      let str = valArr.join('') + this.flagid
+      return md5(str)
     }
   }
 }
@@ -33,21 +74,25 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
+.hello {
+  padding: 20px;
 }
-
-ul {
-  list-style-type: none;
-  padding: 0;
+.table {
+  line-height: 40px;
+  border: 1px solid #efefef;
 }
-
-li {
-  display: inline-block;
-  margin: 0 10px;
+.row-wrapper {
+  display: flex;
+  height: 40px;
+  text-align: center;
 }
-
-a {
-  color: #42b983;
+.row-wrapper:first-child {
+  border-bottom: 1px solid #f3f5f7;
+}
+.name, .func {
+  flex: 0 0 33%;
+}
+.value {
+  flex: 0 0 34%;
 }
 </style>
